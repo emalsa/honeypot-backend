@@ -1,0 +1,8 @@
+name: honeypot_backend
+recipe: laravel
+config:
+  webroot: ./public
+  php: '8.1'
+  xdebug: false
+  config:
+    php: .lando.php.ini
