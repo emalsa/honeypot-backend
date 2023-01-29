@@ -3,6 +3,6 @@ recipe: laravel
 config:
   webroot: ./public
   php: '8.1'
-  xdebug: false
+  xdebug: true
   config:
     php: .lando.php.ini

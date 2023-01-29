@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -18,16 +19,25 @@ class MemberController extends Controller {
    * @return \Illuminate\Http\JsonResponse
    * The Json Response.
    */
-  public function getMember(Request $request) {
-    if (1) {
-      return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
-      // Send email
-    }
-    else {
-      // Error
-      return response()->json(['status' => 'error', 'message' => 'Username or password incorrect']);
-    }
+  public function getMember(Request $request): JsonResponse {
+    try {
+      $username = $request->get('username');
+      $password = $request->get('password');
+      $members = Member::where([
+        ['username', '=', $username],
+        ['password', '=', $password],
+      ])->get();
 
+      if (count($members) > 0) {
+        return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
+        // Dispatch Email
+      }
+
+      return response()->json(['status' => 'error', 'message' => 'Username or password incorrect.']);
+    }
+    catch (\Error|\Exception $exception) {
+      return response()->json(['status' => 'error', 'message' => 'Something went wrong.']);
+    }
 
   }
 
