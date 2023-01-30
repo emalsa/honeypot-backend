@@ -19,7 +19,10 @@ class MemberController extends Controller {
    * @return \Illuminate\Http\JsonResponse
    * The Json Response.
    */
-  public function getMember(Request $request): JsonResponse {
+  public function getMember(Request $request) {
+
+
+
     try {
       $username = $request->get('username');
       $password = $request->get('password');
@@ -30,7 +33,7 @@ class MemberController extends Controller {
 
       if (count($members) > 0) {
         return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
-        // Dispatch Email
+        // Dispatch Email.
       }
 
       return response()->json(['status' => 'error', 'message' => 'Username or password incorrect.']);

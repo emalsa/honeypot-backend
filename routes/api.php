@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+  return $request->user();
 });
 
+// CRUD.
 Route::resource('members', \App\Http\Controllers\MemberController::class);
-Route::post('test', 'App\Http\Controllers\MemberController@getMember');
+
+// Endpoint for Frontend.
+Route::post('get-member', 'App\Http\Controllers\MemberController@getMember');
