@@ -6,3 +6,7 @@ config:
   xdebug: true
   config:
     php: .lando.php.ini
+
+proxy:
+  appserver:
+    - honeypot-backend.localhost
