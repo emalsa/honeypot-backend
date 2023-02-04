@@ -1,6 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
+use Spatie\WebhookClient\Models\WebhookCall;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +18,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
+
+// Stripe
+Route::stripeWebhooks('stripe-webhook');

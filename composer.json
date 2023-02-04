@@ -10,7 +10,9 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "spatie/laravel-stripe-webhooks": "^3.2"
+        "mailgun/mailgun-php": "^3.5",
+        "spatie/laravel-stripe-webhooks": "^3.2",
+        "taylornetwork/laravel-username-generator": "^2.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

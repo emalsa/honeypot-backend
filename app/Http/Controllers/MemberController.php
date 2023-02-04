@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\LoginEmailAlert;
 use App\Models\Member;
-use GuzzleHttp\Psr7\Response;
+use App\Services\MailgunSendMail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 
 class MemberController extends Controller {
+
+  /**
+   * @var \App\Services\MailgunSendMail
+   */
+  private MailgunSendMail $mailgunSendMail;
+
+  public function __construct(MailgunSendMail $mailgunSendMail) {
+    $this->mailgunSendMail = $mailgunSendMail;
+
+  }
 
   /**
    * Method from Honeypot, sends the alert email if username and password matches.
@@ -19,21 +29,23 @@ class MemberController extends Controller {
    * @return \Illuminate\Http\JsonResponse
    * The Json Response.
    */
-  public function getMember(Request $request) {
-
-
-
+  public function getMember(Request $request): JsonResponse {
     try {
       $username = $request->get('username');
       $password = $request->get('password');
+      /** @var \Illuminate\Database\Eloquent\Collection $members */
       $members = Member::where([
         ['username', '=', $username],
         ['password', '=', $password],
-      ])->get();
+      ])->first();
 
-      if (count($members) > 0) {
-        return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
+
+      if ($members instanceof Member) {
         // Dispatch Email.
+        $capturedData = ['IP' => '11.22.33.44', 'Browser' => 'Firefox'];
+        LoginEmailAlert::dispatch($members, $capturedData);
+        // Return response.
+        return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
       }
 
       return response()->json(['status' => 'error', 'message' => 'Username or password incorrect.']);
