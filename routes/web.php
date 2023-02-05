@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use Spatie\StripeWebhooks\ProcessStripeWebhookJob;
-use Spatie\WebhookClient\Models\WebhookCall;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,5 +19,18 @@ Route::get('/', function () {
   return view('welcome');
 });
 
-// Stripe webhook
+// Run queue worker, because there are some problems
+// on the hoster side to run the queue worker via cron.
+Route::get('/queue-work', function () {
+  try {
+    Log::error('Artisan called: "queue:work"');
+    Artisan::call('queue:work --stop-when-empty');
+  }
+  catch (\Exception $e) {
+    Log::error('Error calling /dispatch route.');
+    Log::error($e->getMessage());
+  }
+});
+
+// Stripe webhook.
 Route::stripeWebhooks('stripe-webhook');
