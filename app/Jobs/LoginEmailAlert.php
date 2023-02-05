@@ -16,22 +16,25 @@ class LoginEmailAlert implements ShouldQueue {
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
   /**
+   * The member.
+   *
    * @var \App\Models\Member
    */
   protected Member $member;
 
   /**
-   * @var \App\Services\MailgunSendMail
+   * The data used in email alert.
+   *
+   * @var array
    */
-  protected MailgunSendMail $mailgunSendMail;
-
   protected array $data;
 
 
   /**
-   * Create a new job instance.
+   * The construct.
    *
-   * @return void
+   * @param  \App\Models\Member  $member
+   * @param  array  $data
    */
   public function __construct(Member $member, array $data) {
     $this->member = $member;
@@ -39,7 +42,9 @@ class LoginEmailAlert implements ShouldQueue {
   }
 
   /**
-   * Execute the job.
+   * Executes the job.
+   *
+   * @param  \App\Services\MailgunSendMail  $mailgunSendMail
    *
    * @return void
    */

@@ -9,12 +9,13 @@ use TaylorNetwork\UsernameGenerator\Facades\UsernameGenerator;
 class CreateMember {
 
   /**
+   * Creates a new member given data from endpoint.
+   *
    * @param  array  $data
    *
    * @return bool
    */
   public function createMember(array $data): bool {
-
     try {
       $credentials = $this->getCredentials();
       Member::create([
@@ -46,7 +47,7 @@ class CreateMember {
   protected function getCredentials(): array {
     return [
       'username' => UsernameGenerator::generate(),
-      'password' => UsernameGenerator::generate() . rand(10, 50) . '=',
+      'password' => UsernameGenerator::generate() . rand(9, 150) . '=',
     ];
   }
 

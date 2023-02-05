@@ -21,5 +21,5 @@ Route::get('/', function () {
   return view('welcome');
 });
 
-// Stripe
+// Stripe webhook
 Route::stripeWebhooks('stripe-webhook');

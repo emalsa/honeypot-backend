@@ -16,15 +16,23 @@ class StripeWebhookJob implements ShouldQueue {
 
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-  /** @var \Spatie\WebhookClient\Models\WebhookCall */
+  /**
+   * The stripe webhook library.
+   *
+   * @var \Spatie\WebhookClient\Models\WebhookCall
+   */
   protected WebhookCall $webhookCall;
 
   /**
+   * The mailgun service.
+   *
    * @var \App\Services\MailgunSendMail
    */
   protected MailgunSendMail $mailgunSendMail;
 
   /**
+   * The create member service.
+   *
    * @var \App\Services\CreateMember
    */
   protected CreateMember $createMember;
@@ -40,8 +48,10 @@ class StripeWebhookJob implements ShouldQueue {
   }
 
   /**
-   * Execute the job.
+   * Executes the job.
    *
+   * @param  \App\Services\CreateMember  $createMember
+   * The create member service.
    * @param  \App\Services\MailgunSendMail  $mailgunSendMail
    * The Mailgun service to send email.
    *
@@ -67,7 +77,6 @@ class StripeWebhookJob implements ShouldQueue {
     catch (\Exception $exception) {
       Log::error($exception->getMessage());
     }
-    return;
   }
 
 }
