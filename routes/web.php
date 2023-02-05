@@ -34,3 +34,4 @@ Route::get('/queue-work', function () {
 
 // Stripe webhook.
 Route::stripeWebhooks('stripe-webhook');
+

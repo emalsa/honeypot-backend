@@ -31,6 +31,7 @@ class MemberController extends Controller {
    */
   public function getMember(Request $request): JsonResponse {
     try {
+      return response()->json($request->get('data'));
       $username = $request->get('username');
       $password = $request->get('password');
       /** @var \Illuminate\Database\Eloquent\Collection $members */
@@ -41,8 +42,9 @@ class MemberController extends Controller {
 
 
       if ($members instanceof Member) {
+        $capturedData = $request->get('data');
         // Dispatch Email.
-        $capturedData = ['IP' => '11.22.33.44', 'Browser' => 'Firefox'];
+//        $capturedData = ['IP' => '11.22.33.44', 'Browser' => 'Firefox'];
         LoginEmailAlert::dispatch($members, $capturedData);
         // Return response.
         return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
