@@ -39,6 +39,7 @@ class LoginEmailAlert implements ShouldQueue {
   public function __construct(Member $member, array $data) {
     $this->member = $member;
     $this->data = $data;
+    Log::error('LoginEmailAlert __construct');
   }
 
   /**
@@ -49,6 +50,8 @@ class LoginEmailAlert implements ShouldQueue {
    * @return void
    */
   public function handle(MailgunSendMail $mailgunSendMail) {
+    Log::error('LoginEmailAlert handle');
+
     try {
       $data = [
         'to' => $this->member->getAttribute('email'),
