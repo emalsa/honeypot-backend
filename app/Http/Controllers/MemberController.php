@@ -31,7 +31,6 @@ class MemberController extends Controller {
    */
   public function getMember(Request $request): JsonResponse {
     try {
-      return response()->json($request->get('data'));
       $username = $request->get('username');
       $password = $request->get('password');
       /** @var \Illuminate\Database\Eloquent\Collection $members */
