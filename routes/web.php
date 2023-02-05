@@ -24,10 +24,10 @@ Route::get('/', function () {
 Route::get('/queue-work', function () {
   try {
     Log::error('Artisan called: "queue:work"');
-    Artisan::call('queue:work --stop-when-empty');
+    Artisan::call('queue:work --stop-when-empty --max-jobs=20');
   }
   catch (\Exception $e) {
-    Log::error('Error calling /dispatch route.');
+    Log::error('Error calling /queue-work route.');
     Log::error($e->getMessage());
   }
 });
