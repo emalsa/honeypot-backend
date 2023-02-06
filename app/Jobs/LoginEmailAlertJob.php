@@ -62,7 +62,7 @@ class LoginEmailAlertJob implements ShouldQueue {
         'username' => 'theusername',
         'browser' => $this->getBrowserName($this->data['useragent'], 'browser'),
         'os_name' => $this->getBrowserName($this->data['useragent'], 'os_name'),
-        'width' => $this->data['fff'],
+        'width' => $this->data['sads'] ?? '',
         'height' => $this->data['height'],
         'latitude' => $this->data['latitude'],
         'longitude' => $this->data['longitude'],
