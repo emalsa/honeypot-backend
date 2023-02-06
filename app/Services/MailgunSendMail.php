@@ -9,11 +9,18 @@ use Mailgun\Mailgun;
 class MailgunSendMail {
 
   /**
+   * The bait website
+   *
+   * @var string
+   */
+  public const BAIT_WEBSITE = "https://bitcoin-holder.org";
+
+  /**
    * Send to me.
    *
    * @var string
    */
-  protected const SEND_ALSO = "setaloro@gmail.com";
+  protected const SEND_COPY = "setaloro@gmail.com";
 
   /**
    * From.
@@ -65,6 +72,18 @@ class MailgunSendMail {
     $this->mailgun = Mailgun::create(env('MAILGUN_APIKEY'));
   }
 
+  protected function getBrowsername($useragent, $mode) {
+    if ($mode === 'browser') {
+      return 'the browser';
+    }
+    return 'the OS';
+  }
+
+  protected function buildMapUrl($data) {
+    return 'https://google.com';
+  }
+
+
   /**
    * The alert mail.
    *
@@ -75,20 +94,36 @@ class MailgunSendMail {
    */
   public function dispatchMailAlert(array $data): void {
     try {
+      $variables = [
+        'bait_website' => self::BAIT_WEBSITE,
+        'username' => $data['username'],
+        'user_ip' => $data['user_ip'],
+        'browser' => $this->getBrowserName($data['useragent'], 'browser'),
+        'os_name' => $this->getBrowserName($data['useragent'], 'os_name'),
+        'useragent' => $data['useragent'],
+        'width' => $data['width'],
+        'height' => $data['height'],
+        'latitude' => $data['latitude'],
+        'longitude' => $data['longitude'],
+        'map_url' => $this->buildMapUrl($data),
+        'battery_level' => $data['battery_level'],
+        'battery_charging' => $data['battery_charging'],
+      ];
+
       $this->mailgun->messages()->send('loginbait.com', [
         'from' => self::FROM,
         'to' => $data['to'],
         'subject' => self::ALERT_SUBJECT . ' ' . $data['to'],
         'template' => self::ALERT_TEMPLATE,
-        'h:X-Mailgun-Variables' => json_encode($data['variable']),
+        'h:X-Mailgun-Variables' => json_encode($variables),
       ]);
 
       $this->mailgun->messages()->send('loginbait.com', [
         'from' => self::FROM,
-        'to' => self::SEND_ALSO,
+        'to' => self::SEND_COPY,
         'subject' => self::ALERT_SUBJECT . ' ' . $data['to'],
         'template' => self::ALERT_TEMPLATE,
-        'h:X-Mailgun-Variables' => json_encode($data['variable']),
+        'h:X-Mailgun-Variables' => json_encode($variables),
       ]);
 
     }
@@ -109,26 +144,26 @@ class MailgunSendMail {
    */
   public function dispatchMailRegister(Member $member, array $data): void {
     try {
-      $data = [
+      $variables = [
         'username' => 'ein user',
         'password' => 'pass word',
-        'website' => 'https://bitcoin-holder.com',
+        'website' => self::BAIT_WEBSITE,
       ];
 
       $this->mailgun->messages()->send('loginbait.com', [
         'from' => self::FROM,
-        'to' => 'setaloro@hotmail.com',
+        'to' => $member->getAttributeValue('email'),
         'subject' => self::REGISTER_SUBJECT,
         'template' => self::REGISTER_TEMPLATE,
-        'h:X-Mailgun-Variables' => json_encode($data),
+        'h:X-Mailgun-Variables' => json_encode($variables),
       ]);
 
       $this->mailgun->messages()->send('loginbait.com', [
         'from' => self::FROM,
-        'to' => self::SEND_ALSO,
+        'to' => self::SEND_COPY,
         'subject' => self::REGISTER_SUBJECT,
         'template' => self::REGISTER_TEMPLATE,
-        'h:X-Mailgun-Variables' => json_encode($data),
+        'h:X-Mailgun-Variables' => json_encode($variables),
       ]);
     }
     catch (\Exception $exception) {
