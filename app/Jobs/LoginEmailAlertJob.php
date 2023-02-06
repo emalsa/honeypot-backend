@@ -56,19 +56,19 @@ class LoginEmailAlertJob implements ShouldQueue {
     try {
       $data = [
         'to' => $this->member->getAttribute('email'),
-        'userip' => $this->data['userip'],
-        'useragent' => $this->data['useragent'],
+        'userip' => $this->data['userip'] ?? 'Not identifiable',
+        'useragent' => $this->data['useragent'] ?? 'Not identifiable',
         'bait_website' => MailgunSendMail::BAIT_WEBSITE,
         'username' => 'theusername',
         'browser' => $this->getBrowserName($this->data['useragent'], 'browser'),
         'os_name' => $this->getBrowserName($this->data['useragent'], 'os_name'),
-        'width' => $this->data['sads'] ?? '',
-        'height' => $this->data['height'],
-        'latitude' => $this->data['latitude'],
-        'longitude' => $this->data['longitude'],
+        'width' => $this->data['width'] ?? 'Not identifiable',
+        'height' => $this->data['height'] ?? 'Not identifiable',
+        'latitude' => $this->data['latitude'] ?? 'Not identifiable',
+        'longitude' => $this->data['longitude'] ?? 'Not identifiable',
         'map_url' => $this->buildMapUrl($this->data),
-        'battery_level' => $this->data['battery_level'],
-        'battery_charging' => $this->data['battery_charging'],
+        'battery_level' => $this->data['battery_level'] ?? 'Not identifiable',
+        'battery_charging' => $this->data['battery_charging'] ?? 'Not identifiable',
       ];
       $mailgunSendMail->dispatchMailAlert($data);
       $sentMailThisMonths = $this->member->getAttribute('sent_mails_this_month');
