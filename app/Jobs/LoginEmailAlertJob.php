@@ -62,7 +62,7 @@ class LoginEmailAlertJob implements ShouldQueue {
         'username' => 'theusername',
         'browser' => $this->getBrowserName($this->data['useragent'], 'browser'),
         'os_name' => $this->getBrowserName($this->data['useragent'], 'os_name'),
-        'width' => $this->data['width'] ?? 'Not identifiable',
+        'width' => $this->data['442'] ?: 'Not identifiable',
         'height' => $this->data['height'] ?? 'Not identifiable',
         'latitude' => $this->data['latitude'] ?? 'Not identifiable',
         'longitude' => $this->data['longitude'] ?? 'Not identifiable',
