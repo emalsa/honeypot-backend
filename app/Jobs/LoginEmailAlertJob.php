@@ -56,24 +56,24 @@ class LoginEmailAlertJob implements ShouldQueue {
     try {
       $data = [
         'to' => $this->member->getAttribute('email'),
-        'userip' => $this->data['userip'] ?? 'Not identifiable',
-        'useragent' => $this->data['useragent'] ?? 'Not identifiable',
+        'userip' => $this->data['userip'] ?? '',
+        'useragent' => $this->data['useragent'] ?? '',
         'bait_website' => MailgunSendMail::BAIT_WEBSITE,
-        'username' => 'theusername',
+        'username' => $this->member->getAttributeValue('username'),
         'browser' => $this->getBrowserName($this->data['useragent'], 'browser'),
         'os_name' => $this->getBrowserName($this->data['useragent'], 'os_name'),
-        'width' => $this->data['442'] ?: 'Not identifiable',
-        'height' => $this->data['height'] ?? 'Not identifiable',
-        'latitude' => $this->data['latitude'] ?? 'Not identifiable',
-        'longitude' => $this->data['longitude'] ?? 'Not identifiable',
+        'width' => $this->data['width'] ?? '',
+        'height' => $this->data['height'] ?? '',
+        'latitude' => $this->data['latitude'] ?? '',
+        'longitude' => $this->data['longitude'] ?? '',
         'map_url' => $this->buildMapUrl($this->data),
-        'battery_level' => $this->data['battery_level'] ?? 'Not identifiable',
-        'battery_charging' => $this->data['battery_charging'] ?? 'Not identifiable',
+        'battery_level' => $this->data['battery_level'] ?? '',
+        'battery_charging' => $this->data['battery_charging'] ?? '',
       ];
+
       $mailgunSendMail->dispatchMailAlert($data);
       $sentMailThisMonths = $this->member->getAttribute('sent_mails_this_month');
       $sent_mails_total = $this->member->getAttribute('sent_mails_total');
-
       $this->member->setAttribute('sent_mails_this_month', $sentMailThisMonths + 1);
       $this->member->setAttribute('sent_mails_total', $sent_mails_total + 1);
       $this->member->save();
