@@ -112,12 +112,12 @@ class MailgunSendMail {
       $data = [
         'username' => 'ein user',
         'password' => 'pass word',
-        'website' => 'https://bitcoint-holder.com',
+        'website' => 'https://bitcoin-holder.com',
       ];
 
       $this->mailgun->messages()->send('loginbait.com', [
         'from' => self::FROM,
-        'to' => $member->getAttributeValue('email'),
+        'to' => 'setaloro@hotmail.com',
         'subject' => self::REGISTER_SUBJECT,
         'template' => self::REGISTER_TEMPLATE,
         'h:X-Mailgun-Variables' => json_encode($data),
