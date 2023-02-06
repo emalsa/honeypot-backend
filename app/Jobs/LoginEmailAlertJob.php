@@ -56,7 +56,7 @@ class LoginEmailAlertJob implements ShouldQueue {
     try {
       $data = [
         'to' => $this->member->getAttribute('email'),
-        'userip' => $this->data['userip'] ?? '',
+        'user_ip' => $this->data['user_ip'] ?? '',
         'useragent' => $this->data['useragent'] ?? '',
         'bait_website' => MailgunSendMail::BAIT_WEBSITE,
         'username' => $this->member->getAttributeValue('username'),
