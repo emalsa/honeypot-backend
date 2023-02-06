@@ -60,7 +60,6 @@ class LoginEmailAlertJob implements ShouldQueue {
         'useragent' => $this->data['useragent'],
         'bait_website' => MailgunSendMail::BAIT_WEBSITE,
         'username' => 'theusername',
-        'user_ip' => $this->data['user_ip'],
         'browser' => $this->getBrowserName($this->data['useragent'], 'browser'),
         'os_name' => $this->getBrowserName($this->data['useragent'], 'os_name'),
         'width' => $this->data['width'],
