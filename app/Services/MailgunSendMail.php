@@ -34,7 +34,7 @@ class MailgunSendMail {
    *
    * @var string
    */
-  protected const ALERT_SUBJECT = 'Login attempt detected for';
+  protected const ALERT_SUBJECT = 'Loginbait.com: Login attempt detected';
 
   /**
    * Alert: Template.
@@ -48,7 +48,7 @@ class MailgunSendMail {
    *
    * @var string
    */
-  protected const REGISTER_SUBJECT = 'Registration for loginbait.com';
+  protected const REGISTER_SUBJECT = 'Loginbait.com: Registration';
 
   /**
    * Register: Template.
