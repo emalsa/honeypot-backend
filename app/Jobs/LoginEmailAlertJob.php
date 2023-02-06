@@ -56,10 +56,20 @@ class LoginEmailAlertJob implements ShouldQueue {
     try {
       $data = [
         'to' => $this->member->getAttribute('email'),
-        'variable' => [
-          'userip' => $this->data['userip'],
-          'useragent' => $this->data['useragent'],
-        ],
+        'userip' => $this->data['userip'],
+        'useragent' => $this->data['useragent'],
+        'bait_website' => MailgunSendMail::BAIT_WEBSITE,
+        'username' => 'theusername',
+        'user_ip' => $this->data['user_ip'],
+        'browser' => $this->getBrowserName($this->data['useragent'], 'browser'),
+        'os_name' => $this->getBrowserName($this->data['useragent'], 'os_name'),
+        'width' => $this->data['width'],
+        'height' => $this->data['height'],
+        'latitude' => $this->data['latitude'],
+        'longitude' => $this->data['longitude'],
+        'map_url' => $this->buildMapUrl($this->data),
+        'battery_level' => $this->data['battery_level'],
+        'battery_charging' => $this->data['battery_charging'],
       ];
       $mailgunSendMail->dispatchMailAlert($data);
       $sentMailThisMonths = $this->member->getAttribute('sent_mails_this_month');
@@ -73,6 +83,17 @@ class LoginEmailAlertJob implements ShouldQueue {
       Log::error($exception->getMessage());
     }
 
+  }
+
+  protected function getBrowsername($useragent, $mode) {
+    if ($mode === 'browser') {
+      return 'the browser';
+    }
+    return 'the OS';
+  }
+
+  protected function buildMapUrl($data) {
+    return 'https://google.com';
   }
 
 }
