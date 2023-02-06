@@ -11,12 +11,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class LoginEmailAlert implements ShouldQueue {
+class LoginEmailAlertJob implements ShouldQueue {
 
   use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
   /**
-   * The member.
+   * The member entity.
    *
    * @var \App\Models\Member
    */
@@ -39,7 +39,7 @@ class LoginEmailAlert implements ShouldQueue {
   public function __construct(Member $member, array $data) {
     $this->member = $member;
     $this->data = $data;
-    Log::error('LoginEmailAlert __construct');
+    Log::error('LoginEmailAlertJob __construct');
   }
 
   /**
@@ -50,14 +50,15 @@ class LoginEmailAlert implements ShouldQueue {
    * @return void
    */
   public function handle(MailgunSendMail $mailgunSendMail) {
-    Log::error('LoginEmailAlert handle');
+    Log::error('LoginEmailAlertJob handle');
+    Log::debug(json_encode($this->data));
 
     try {
       $data = [
         'to' => $this->member->getAttribute('email'),
         'variable' => [
-          'test1' => 'test',
-          'just' => 'wow',
+          'userip' => $this->data['userip'],
+          'useragent' => $this->data['useragent'],
         ],
       ];
       $mailgunSendMail->dispatchMailAlert($data);

@@ -13,12 +13,13 @@ class CreateMember {
    *
    * @param  array  $data
    *
-   * @return bool
+   * @return \App\Models\Member|bool
+   * Member entity if successful,other the false
    */
-  public function createMember(array $data): bool {
+  public function createMember(array $data): Member|bool {
     try {
       $credentials = $this->getCredentials();
-      Member::create([
+      return Member::create([
         'username' => $credentials['username'],
         'password' => $credentials['password'],
         'email' => $data['billing_details']['email'],
@@ -29,8 +30,6 @@ class CreateMember {
         'sent_mails_total' => 0,
         'expires' => date('Y-m-d', strtotime("+1 year")),
       ]);
-
-      return TRUE;
     }
     catch (\Exception $e) {
       Log::error($e->getMessage());

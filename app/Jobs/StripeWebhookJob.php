@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Member;
 use App\Services\CreateMember;
 use App\Services\MailgunSendMail;
 use Illuminate\Bus\Queueable;
@@ -66,8 +67,11 @@ class StripeWebhookJob implements ShouldQueue {
       switch ($type) {
         case 'charge.succeeded':
           $data = $this->webhookCall->payload['data']['object'];
-          $memberCreated = $this->createMember->createMember($data);
-          $this->mailgunSendMail->dispatchMailRegister($memberCreated, $data);
+          $member = $this->createMember->createMember($data);
+          if ($member instanceof Member) {
+            $this->mailgunSendMail->dispatchMailRegister($member, $data);
+          }
+          // Error handling?
           break;
         default:
           return;

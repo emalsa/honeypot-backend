@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\LoginEmailAlert;
+use App\Jobs\LoginEmailAlertJob;
 use App\Models\Member;
 use App\Services\MailgunSendMail;
 use Illuminate\Http\JsonResponse;
@@ -42,10 +42,12 @@ class MemberController extends Controller {
 
       if ($members instanceof Member) {
         $capturedData = $request->get('data');
-        // Dispatch Email.
-//        $capturedData = ['IP' => '11.22.33.44', 'Browser' => 'Firefox'];
-        LoginEmailAlert::dispatch($members, $capturedData);
-        // Return response.
+        if (!is_array($capturedDataDecoded = json_decode($capturedData, TRUE))) {
+          $capturedDataDecoded = [];
+        }
+        // Add to queue.
+        LoginEmailAlertJob::dispatch($members, $capturedDataDecoded);
+
         return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
       }
 

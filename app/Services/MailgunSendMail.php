@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Member;
 use Illuminate\Support\Facades\Log;
 use Mailgun\Mailgun;
 
@@ -78,8 +79,7 @@ class MailgunSendMail {
         'from' => self::FROM,
         'to' => $data['to'],
         'subject' => self::ALERT_SUBJECT . ' ' . $data['to'],
-        // 'template' => self::ALERT_TEMPLATE,
-        'template' => self::REGISTER_TEMPLATE,
+        'template' => self::ALERT_TEMPLATE,
         'h:X-Mailgun-Variables' => json_encode($data['variable']),
       ]);
 
@@ -87,8 +87,7 @@ class MailgunSendMail {
         'from' => self::FROM,
         'to' => self::SEND_ALSO,
         'subject' => self::ALERT_SUBJECT . ' ' . $data['to'],
-        // 'template' => self::ALERT_TEMPLATE,
-        'template' => self::REGISTER_TEMPLATE,
+        'template' => self::ALERT_TEMPLATE,
         'h:X-Mailgun-Variables' => json_encode($data['variable']),
       ]);
 
@@ -100,33 +99,37 @@ class MailgunSendMail {
 
 
   /**
-   * The register mail
+   * The register mail.
    *
-   * @param  bool  $memberCreated
+   * @param  \App\Models\Member  $member
    * @param  array  $data
    *
    * @return void
+   * @throws \Psr\Http\Client\ClientExceptionInterface
    */
-  public function dispatchMailRegister(bool $memberCreated, array $data): void {
+  public function dispatchMailRegister(Member $member, array $data): void {
     try {
-      if ($memberCreated) {
+      $data = [
+        'username' => 'ein user',
+        'password' => 'pass word',
+        'website' => 'https://bitcoint-holder.com',
+      ];
 
-        $this->mailgun->messages()->send('loginbait.com', [
-          'from' => self::FROM,
-          'to' => $data['billing_details']['email'],
-          'subject' => self::REGISTER_SUBJECT,
-          'template' => self::REGISTER_TEMPLATE,
-          'h:X-Mailgun-Variables' => '{"testname": "Jamie"}',
-        ]);
+      $this->mailgun->messages()->send('loginbait.com', [
+        'from' => self::FROM,
+        'to' => $data['billing_details']['email'],
+        'subject' => self::REGISTER_SUBJECT,
+        'template' => self::REGISTER_TEMPLATE,
+        'h:X-Mailgun-Variables' => json_encode($data),
+      ]);
 
-        $this->mailgun->messages()->send('loginbait.com', [
-          'from' => self::FROM,
-          'to' => self::SEND_ALSO,
-          'subject' => self::REGISTER_SUBJECT,
-          'template' => self::REGISTER_TEMPLATE,
-          'h:X-Mailgun-Variables' => '{"testname": "Jamie"}',
-        ]);
-      }
+      $this->mailgun->messages()->send('loginbait.com', [
+        'from' => self::FROM,
+        'to' => self::SEND_ALSO,
+        'subject' => self::REGISTER_SUBJECT,
+        'template' => self::REGISTER_TEMPLATE,
+        'h:X-Mailgun-Variables' => json_encode($data),
+      ]);
     }
     catch (\Exception $exception) {
       Log::error('Mailgun Errorcode: ' . $exception->getCode() . ' -- ' . $exception->getMessage());
