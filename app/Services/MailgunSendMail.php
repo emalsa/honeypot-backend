@@ -117,7 +117,7 @@ class MailgunSendMail {
 
       $this->mailgun->messages()->send('loginbait.com', [
         'from' => self::FROM,
-        'to' => $data['billing_details']['email'],
+        'to' => $member->getAttributeValue('email'),
         'subject' => self::REGISTER_SUBJECT,
         'template' => self::REGISTER_TEMPLATE,
         'h:X-Mailgun-Variables' => json_encode($data),
