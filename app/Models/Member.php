@@ -11,6 +11,7 @@ class Member extends Model {
   use HasFactory, FindSimilarUsernames;
 
   protected $fillable = [
+    'status',
     'username',
     'password',
     'email',

@@ -37,6 +37,7 @@ class MemberController extends Controller {
       $members = Member::where([
         ['username', '=', $username],
         ['password', '=', $password],
+        ['status', '=', 1],
       ])->first();
 
 
@@ -51,7 +52,7 @@ class MemberController extends Controller {
         return response()->json(['status' => 'ok', 'redirect' => '/dashboard']);
       }
 
-      return response()->json(['status' => 'error', 'message' => 'Username or password incorrect.']);
+      return response()->json(['status' => 'error', 'message' => 'Username or password incorrect. Or inactive']);
     }
     catch (\Error|\Exception $exception) {
       return response()->json(['status' => 'error', 'message' => 'Something went wrong.']);

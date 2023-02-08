@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Member;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use TaylorNetwork\UsernameGenerator\Facades\UsernameGenerator;
 
 class CreateMember {
@@ -19,7 +20,9 @@ class CreateMember {
   public function createMember(array $data): Member|bool {
     try {
       $credentials = $this->getCredentials();
-      return Member::create([
+      /** @var \App\Models\Member $member */
+      $member = Member::create([
+        'status' => 1,
         'username' => $credentials['username'],
         'password' => $credentials['password'],
         'email' => $data['billing_details']['email'],
@@ -30,12 +33,37 @@ class CreateMember {
         'sent_mails_total' => 0,
         'expires' => date('Y-m-d', strtotime("+1 year")),
       ]);
+
+      // Create file.
+      $fileStorage = Storage::disk('private');
+      $username = $member->getAttributeValue('username');
+      $content = $this->createTextContent($username, $member->getAttributeValue('username'));
+      $fileStorage->put("$username/credentials.txt", $content);
+
+      return $member;
     }
     catch (\Exception $e) {
       Log::error($e->getMessage());
       return FALSE;
     }
 
+  }
+
+  /**
+   * Creates the text file to send.
+   *
+   * @param  string  $username
+   * @param  string  $password
+   *
+   * @return string
+   * The content.
+   */
+  protected function createTextContent(string $username, string $password): string {
+    $text = MailgunSendMail::BAIT_WEBSITE . "\n\n";
+    $text .= "username:$username\n";
+    $text .= "password:$password\n";
+
+    return $text;
   }
 
   /**
