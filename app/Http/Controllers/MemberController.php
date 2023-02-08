@@ -17,7 +17,6 @@ class MemberController extends Controller {
 
   public function __construct(MailgunSendMail $mailgunSendMail) {
     $this->mailgunSendMail = $mailgunSendMail;
-
   }
 
   /**

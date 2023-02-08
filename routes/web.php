@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\SpamReceiver;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +24,6 @@ Route::get('/', function () {
 // on the hoster side to run the queue worker via cron.
 Route::get('/queue-work', function () {
   try {
-    Log::error('Artisan called: "queue:work"');
     Artisan::call('queue:work --stop-when-empty --max-jobs=20');
   }
   catch (\Exception $e) {
@@ -34,4 +34,3 @@ Route::get('/queue-work', function () {
 
 // Stripe webhook.
 Route::stripeWebhooks('stripe-webhook');
-

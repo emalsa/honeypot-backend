@@ -23,3 +23,4 @@ Route::resource('members', \App\Http\Controllers\MemberController::class);
 
 // Endpoint for frontend "log in".
 Route::post('get-member', 'App\Http\Controllers\MemberController@getMember');
+Route::post('spam', 'App\Services\SpamReceiver@handle');
