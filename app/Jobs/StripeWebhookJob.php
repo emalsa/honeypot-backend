@@ -66,12 +66,19 @@ class StripeWebhookJob implements ShouldQueue {
 
       switch ($type) {
         case 'charge.succeeded':
-          $data = $this->webhookCall->payload['data']['object'];
-          $member = $this->createMember->createMember($data);
+          $payloadData = $this->webhookCall->payload['data']['object'];
+          $member = $this->createMember->createMember($payloadData);
           if ($member instanceof Member) {
+            $data = [
+              'username' => $member->getAttributeValue('username'),
+              'password' => $member->getAttributeValue('password'),
+              'website' => MailgunSendMail::BAIT_WEBSITE,
+            ];
             $this->mailgunSendMail->dispatchMailRegister($member, $data);
+            return;
           }
-          // Error handling?
+          // Error handling
+          Log::error('StripeWebhookJob.php: Could not create user or dispatch mail. Stripe data: ' . json_encode($this->webhookCall->payload));
           break;
         default:
           return;
@@ -80,6 +87,8 @@ class StripeWebhookJob implements ShouldQueue {
     }
     catch (\Exception $exception) {
       Log::error($exception->getMessage());
+      Log::error('Stripe data: ' . json_encode($this->webhookCall->payload));
+
     }
   }
 

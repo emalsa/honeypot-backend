@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Member;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Mailgun\Mailgun;
 
 class MailgunSendMail {
@@ -59,17 +60,18 @@ class MailgunSendMail {
 
 
   /**
-   * The mailgun send service.
+   * The mailgun send service for loginbait.com.
    *
    * @var \Mailgun\Mailgun
    */
-  protected Mailgun $mailgun;
+  protected Mailgun $mailgunLoginbait;
 
   /**
    * The construct.
    */
   public function __construct() {
-    $this->mailgun = Mailgun::create(env('MAILGUN_APIKEY'));
+    $this->mailgunLoginbait = Mailgun::create(env('MAILGUN_APIKEY__LOGINBAIT'));
+    $this->mailgunBitcoinHolder = Mailgun::create(env('MAILGUN_APIKEY__BITCOINHOLDER'));
   }
 
   /**
@@ -82,7 +84,7 @@ class MailgunSendMail {
    */
   public function dispatchMailAlert(array $data): void {
     try {
-      $this->mailgun->messages()->send('loginbait.com', [
+      $this->mailgunLoginbait->messages()->send('loginbait.com', [
         'from' => self::FROM,
         'to' => $data['to'],
         'subject' => self::ALERT_SUBJECT . ' ' . $data['to'],
@@ -90,7 +92,7 @@ class MailgunSendMail {
         'h:X-Mailgun-Variables' => json_encode($data),
       ]);
 
-      $this->mailgun->messages()->send('loginbait.com', [
+      $this->mailgunLoginbait->messages()->send('loginbait.com', [
         'from' => self::FROM,
         'to' => self::SEND_COPY,
         'subject' => self::ALERT_SUBJECT . ' ' . $data['to'],
@@ -106,7 +108,7 @@ class MailgunSendMail {
 
 
   /**
-   * The register mail.
+   * The registration mail.
    *
    * @param  \App\Models\Member  $member
    * @param  array  $data
@@ -116,24 +118,33 @@ class MailgunSendMail {
    */
   public function dispatchMailRegister(Member $member, array $data): void {
     try {
-      $this->mailgun->messages()->send('loginbait.com', [
+      $username = $member->getAttributeValue('username');
+      $filePath = Storage::disk('private')->path("$username/credentials.txt");
+
+      $this->mailgunLoginbait->messages()->send('loginbait.com', [
         'from' => self::FROM,
         'to' => $member->getAttributeValue('email'),
         'subject' => self::REGISTER_SUBJECT,
         'template' => self::REGISTER_TEMPLATE,
         'h:X-Mailgun-Variables' => json_encode($data),
+        'attachment' => [
+          ['filePath' => $filePath, 'filename' => 'credentials.txt'],
+        ],
       ]);
 
-      $this->mailgun->messages()->send('loginbait.com', [
+      $this->mailgunLoginbait->messages()->send('loginbait.com', [
         'from' => self::FROM,
         'to' => self::SEND_COPY,
         'subject' => self::REGISTER_SUBJECT,
         'template' => self::REGISTER_TEMPLATE,
         'h:X-Mailgun-Variables' => json_encode($data),
+        'attachment' => [
+          ['filePath' => $filePath, 'filename' => 'credentials.txt'],
+        ],
       ]);
     }
     catch (\Exception $exception) {
-      Log::error('Mailgun Errorcode: ' . $exception->getCode() . ' -- ' . $exception->getMessage());
+      Log::error('MailgunSendMail Errorcode: ' . $exception->getCode() . ' -- ' . $exception->getMessage());
     }
   }
 

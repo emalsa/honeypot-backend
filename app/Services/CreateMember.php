@@ -37,7 +37,7 @@ class CreateMember {
       // Create file.
       $fileStorage = Storage::disk('private');
       $username = $member->getAttributeValue('username');
-      $content = $this->createTextContent($username, $member->getAttributeValue('username'));
+      $content = $this->createTextContent($username, $member->getAttributeValue('password'));
       $fileStorage->put("$username/credentials.txt", $content);
 
       return $member;
