@@ -13,7 +13,7 @@ class MailgunSendMail {
    *
    * @var string
    */
-  public const BAIT_WEBSITE = "https://bitcoin-holder.org";
+  public const BAIT_WEBSITE = "www.bitcoin-holder.org";
 
   /**
    * Send to me.
